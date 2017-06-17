@@ -27,18 +27,22 @@
 
 #include "Arduino.h"
 
-class PWM {
-  public:
-  uint8_t value;
-  uint16_t basefreq;
-  void initialize(  int _channel, int _basefreq, int _timer, int _pin);
-  void initialize( int channel, int basefreq , int timer );
-  bool attach(uint8_t pin, uint32_t pvalueMax);
-  void analogWrite( uint32_t value);
+uint8_t PWM_valueMax[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+int8_t PWM_PinChannel[16] = {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1};
 
-  protected:
-  uint8_t _timer, _channel, _valueMax;
+void PWM_initialize( int pin, int channel=0,uint32_t valueMax=255, int basefreq=5000 , int timer =13 ){
+   PWM_PinChannel[pin] = channel;
+   PWM_valueMax[pin] = valueMax;
+  ledcSetup(channel, basefreq, timer);
+  ledcAttachPin(pin, channel);
 };
 
+void analogWrite( uint8_t pin, uint32_t value) {
+  // pulse width, 8191 from 2 ^ 13 - 1
+  uint32_t width = (8191 / PWM_valueMax[pin]) * (int)min(value, PWM_valueMax[pin]);
+
+  // write PWM width
+  ledcWrite(PWM_PinChannel[pin], width);
+};
 
 #endif
