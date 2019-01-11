@@ -39,10 +39,17 @@ void PWM_initialize( int pin, int channel=0,uint32_t valueMax=255, int basefreq=
 
 void analogWrite( uint8_t pin, uint32_t value) {
   // pulse width, 8191 from 2 ^ 13 - 1
-  uint32_t width = (8191 / PWM_valueMax[pin]) * (int)min(value, PWM_valueMax[pin]);
 
-  // write PWM width
-  ledcWrite(PWM_PinChannel[pin], width);
+  if(value ){
+      PWM_initialize(pin);
+      uint32_t width = (8191 / PWM_valueMax[pin]) * (int)min(value, PWM_valueMax[pin]);
+
+      // write PWM width
+      ledcWrite(PWM_PinChannel[pin], width);
+  }
+  else
+    ledcDetachPin(pin);
+
 };
 
 #endif
