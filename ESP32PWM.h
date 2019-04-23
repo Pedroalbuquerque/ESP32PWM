@@ -42,7 +42,7 @@ void analogWrite( uint8_t pin, uint32_t value) {
 
   if(value ){
       PWM_initialize(pin);
-      uint32_t width = (8191 / PWM_valueMax[pin]) * (int)min(value, PWM_valueMax[pin]);
+      uint32_t width = (8191 / PWM_valueMax[pin]) * (int)_min(value, PWM_valueMax[pin]);
 
       // write PWM width
       ledcWrite(PWM_PinChannel[pin], width);
